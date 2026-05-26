@@ -42,16 +42,26 @@ class WhisperService {
     try {
       final request = http.Request('GET', Uri.parse(_modelUrl));
       final response = await client.send(request);
+      if (response.statusCode != 200) {
+        throw Exception('모델 다운로드 실패: HTTP ${response.statusCode}');
+      }
       final total = response.contentLength ?? 0;
       int received = 0;
 
       final file = File(path).openWrite();
-      await for (final chunk in response.stream) {
-        file.add(chunk);
-        received += chunk.length;
-        if (total > 0) yield received / total;
+      try {
+        await file.addStream(response.stream.map((chunk) {
+          received += chunk.length;
+          return chunk;
+        }));
+        await file.close();
+      } catch (e) {
+        await file.close();
+        await File(path).delete().catchError((_) {});
+        rethrow;
       }
-      await file.close();
+      if (total > 0) yield received / total;
+      yield 1.0;
     } finally {
       client.close();
     }
@@ -59,18 +69,22 @@ class WhisperService {
 
   /// WAV 파일을 한국어 텍스트로 변환.
   Future<String> transcribe(String filePath) async {
-    final dir = await _modelDir;
-    final whisper = Whisper(
-      model: WhisperModel.small,
-      modelDir: dir,
-    );
-    final result = await whisper.transcribe(
-      transcribeRequest: TranscribeRequest(
-        audio: filePath,
-        language: 'ko',
-        isTranslate: false,
-      ),
-    );
-    return result.text.trim();
+    try {
+      final dir = await _modelDir;
+      final whisper = Whisper(
+        model: WhisperModel.small,
+        modelDir: dir,
+      );
+      final result = await whisper.transcribe(
+        transcribeRequest: TranscribeRequest(
+          audio: filePath,
+          language: 'ko',
+          isTranslate: false,
+        ),
+      );
+      return result.text.trim();
+    } catch (e) {
+      throw Exception('텍스트 변환 실패: $e');
+    }
   }
 }
