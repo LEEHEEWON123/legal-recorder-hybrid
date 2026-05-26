@@ -17,12 +17,11 @@ class _RecordingScreenState extends State<RecordingScreen> {
   RecordingState _state = RecordingState.idle;
   Duration _elapsed = Duration.zero;
   List<double> _amplitudes = [];
-  late Stream<Amplitude> _amplitudeStream;
+  Stream<Amplitude>? _amplitudeStream;
 
   @override
   void initState() {
     super.initState();
-    _amplitudeStream = _service.amplitudeStream;
   }
 
   String get _timerText {
@@ -48,6 +47,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
       _state = RecordingState.recording;
       _elapsed = Duration.zero;
       _amplitudes = [];
+      _amplitudeStream = _service.amplitudeStream;
     });
 
     _startTimer();
@@ -104,6 +104,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
         _state = RecordingState.idle;
         _elapsed = Duration.zero;
         _amplitudes = [];
+        _amplitudeStream = null;
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -169,7 +170,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
           SizedBox(
             height: 80,
             width: double.infinity,
-            child: _state != RecordingState.idle
+            child: _state != RecordingState.idle && _amplitudeStream != null
                 ? StreamBuilder<Amplitude>(
                     stream: _amplitudeStream,
                     builder: (context, snapshot) {
