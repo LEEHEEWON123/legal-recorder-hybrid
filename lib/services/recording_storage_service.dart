@@ -13,14 +13,19 @@ class RecordingStorageService {
     final indexFile = File(_indexPath);
     if (!await indexFile.exists()) return [];
 
-    final content = await indexFile.readAsString();
-    final List<dynamic> jsonList = jsonDecode(content) as List<dynamic>;
-    final recordings = jsonList
-        .map((e) => Recording.fromJson(e as Map<String, dynamic>))
-        .toList();
+    try {
+      final content = await indexFile.readAsString();
+      final List<dynamic> jsonList = jsonDecode(content) as List<dynamic>;
+      final recordings = jsonList
+          .map((e) => Recording.fromJson(e as Map<String, dynamic>))
+          .toList();
 
-    recordings.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    return recordings;
+      recordings.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return recordings;
+    } catch (_) {
+      // 인덱스 파일이 손상된 경우 빈 목록 반환
+      return [];
+    }
   }
 
   Future<void> saveMetadata(Recording recording) async {
