@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  record: ^5.1.2
+  record: ^6.2.1
   audioplayers: ^6.0.0
   path_provider: ^2.1.3
   share_plus: ^10.0.2
