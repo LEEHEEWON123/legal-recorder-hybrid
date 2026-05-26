@@ -50,20 +50,24 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+  final GlobalKey<RecordingListScreenState> _listKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
-        children: const [
-          RecordingScreen(),
-          RecordingListScreen(),
+        children: [
+          const RecordingScreen(),
+          RecordingListScreen(key: _listKey),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
+        onTap: (index) {
+          if (index == 1) _listKey.currentState?.reload();
+          setState(() => _currentIndex = index);
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.mic_outlined),

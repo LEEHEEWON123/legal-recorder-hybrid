@@ -4,6 +4,8 @@ import '../models/recording.dart';
 
 class RecordingListItem extends StatelessWidget {
   final Recording recording;
+  final bool isPlaying;
+  final VoidCallback onPlay;
   final VoidCallback onShare;
   final VoidCallback onDelete;
   final VoidCallback onTap;
@@ -11,6 +13,8 @@ class RecordingListItem extends StatelessWidget {
   const RecordingListItem({
     super.key,
     required this.recording,
+    required this.isPlaying,
+    required this.onPlay,
     required this.onShare,
     required this.onDelete,
     required this.onTap,
@@ -31,14 +35,23 @@ class RecordingListItem extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color(0xFF2A2A2A),
-                borderRadius: BorderRadius.circular(8),
+            GestureDetector(
+              onTap: onPlay,
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: isPlaying
+                      ? const Color(0xFF7B5EA7)
+                      : const Color(0xFF2A2A2A),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  isPlaying ? Icons.stop : Icons.play_arrow,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
-              child: const Icon(Icons.mic, color: Color(0xFF7B5EA7), size: 20),
             ),
             const SizedBox(width: 12),
             Expanded(

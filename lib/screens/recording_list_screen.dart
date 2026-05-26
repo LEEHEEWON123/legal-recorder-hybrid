@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:audioplayers/audioplayers.dart';
 import '../models/recording.dart';
 import '../services/recording_storage_service.dart';
 import '../widgets/recording_list_item.dart';
@@ -9,21 +10,27 @@ class RecordingListScreen extends StatefulWidget {
   const RecordingListScreen({super.key});
 
   @override
-  State<RecordingListScreen> createState() => _RecordingListScreenState();
+  State<RecordingListScreen> createState() => RecordingListScreenState();
 }
 
-class _RecordingListScreenState extends State<RecordingListScreen> {
+class RecordingListScreenState extends State<RecordingListScreen> {
   late RecordingStorageService _storageService;
   List<Recording> _all = [];
   List<Recording> _filtered = [];
   final TextEditingController _searchController = TextEditingController();
   bool _loading = true;
 
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  String? _playingId;
+
   @override
   void initState() {
     super.initState();
     _init();
     _searchController.addListener(_onSearch);
+    _audioPlayer.onPlayerComplete.listen((_) {
+      setState(() => _playingId = null);
+    });
   }
 
   Future<void> _init() async {
@@ -31,6 +38,8 @@ class _RecordingListScreenState extends State<RecordingListScreen> {
     _storageService = RecordingStorageService(baseDir: dir.path);
     await _loadRecordings();
   }
+
+  Future<void> reload() => _loadRecordings();
 
   Future<void> _loadRecordings() async {
     final recordings = await _storageService.loadAll();
@@ -48,6 +57,17 @@ class _RecordingListScreenState extends State<RecordingListScreen> {
           .where((r) => r.fileName.toLowerCase().contains(query))
           .toList();
     });
+  }
+
+  Future<void> _togglePlay(Recording recording) async {
+    if (_playingId == recording.id) {
+      await _audioPlayer.stop();
+      setState(() => _playingId = null);
+    } else {
+      await _audioPlayer.stop();
+      await _audioPlayer.play(DeviceFileSource(recording.filePath));
+      setState(() => _playingId = recording.id);
+    }
   }
 
   Future<void> _shareRecording(Recording recording) async {
@@ -112,6 +132,7 @@ class _RecordingListScreenState extends State<RecordingListScreen> {
 
   @override
   void dispose() {
+    _audioPlayer.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -167,7 +188,9 @@ class _RecordingListScreenState extends State<RecordingListScreen> {
                             final r = _filtered[index];
                             return RecordingListItem(
                               recording: r,
+                              isPlaying: _playingId == r.id,
                               onTap: () => _showDetailDialog(r),
+                              onPlay: () => _togglePlay(r),
                               onShare: () => _shareRecording(r),
                               onDelete: () => _deleteRecording(r),
                             );
