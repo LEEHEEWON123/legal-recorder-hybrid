@@ -8,7 +8,6 @@ import 'recording_storage_service.dart';
 class RecordingService {
   final AudioRecorder _recorder = AudioRecorder();
   late RecordingStorageService _storageService;
-  String? _currentPath;
   DateTime? _startTime;
   bool _initialized = false;
 
@@ -38,7 +37,6 @@ class RecordingService {
       path: path,
     );
 
-    _currentPath = path;
     _startTime = DateTime.now();
   }
 
@@ -71,7 +69,6 @@ class RecordingService {
     );
 
     await _storageService.saveMetadata(recording);
-    _currentPath = null;
     _startTime = null;
     return recording;
   }
@@ -84,5 +81,6 @@ class RecordingService {
 
   void dispose() {
     _recorder.dispose();
+    _initialized = false;
   }
 }
