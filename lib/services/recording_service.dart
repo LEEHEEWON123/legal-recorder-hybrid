@@ -31,7 +31,7 @@ class RecordingService {
     await _recorder.start(
       const RecordConfig(
         encoder: AudioEncoder.wav,
-        sampleRate: 44100,
+        sampleRate: 16000,
         numChannels: 1,
       ),
       path: path,
