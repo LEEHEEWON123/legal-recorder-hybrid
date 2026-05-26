@@ -3,7 +3,9 @@ import 'package:share_plus/share_plus.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../models/recording.dart';
 import '../services/recording_storage_service.dart';
+import '../services/whisper_service.dart';
 import '../widgets/recording_list_item.dart';
+import '../widgets/transcription_dialog.dart';
 import 'package:path_provider/path_provider.dart';
 
 class RecordingListScreen extends StatefulWidget {
@@ -22,6 +24,7 @@ class RecordingListScreenState extends State<RecordingListScreen> {
 
   final AudioPlayer _audioPlayer = AudioPlayer();
   String? _playingId;
+  final WhisperService _whisperService = WhisperService();
 
   @override
   void initState() {
@@ -68,6 +71,17 @@ class RecordingListScreenState extends State<RecordingListScreen> {
       await _audioPlayer.play(DeviceFileSource(recording.filePath));
       setState(() => _playingId = recording.id);
     }
+  }
+
+  void _transcribeRecording(Recording recording) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => TranscriptionDialog(
+        filePath: recording.filePath,
+        whisperService: _whisperService,
+      ),
+    );
   }
 
   Future<void> _shareRecording(Recording recording) async {
@@ -193,6 +207,7 @@ class RecordingListScreenState extends State<RecordingListScreen> {
                               onPlay: () => _togglePlay(r),
                               onShare: () => _shareRecording(r),
                               onDelete: () => _deleteRecording(r),
+                              onTranscribe: () => _transcribeRecording(r),
                             );
                           },
                         ),
