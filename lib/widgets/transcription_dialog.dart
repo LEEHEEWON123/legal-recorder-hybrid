@@ -70,7 +70,7 @@ class _TranscriptionDialogState extends State<TranscriptionDialog> {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('모델 다운로드 중...'),
+            const Text('텍스트 변환을 위한 AI 모델 다운로드 중...'),
             const SizedBox(height: 12),
             LinearProgressIndicator(value: _downloadProgress),
             const SizedBox(height: 8),
