@@ -9,6 +9,7 @@ class RecordingListItem extends StatelessWidget {
   final VoidCallback onShare;
   final VoidCallback onDelete;
   final VoidCallback onTap;
+  final VoidCallback onTranscribe;
 
   const RecordingListItem({
     super.key,
@@ -18,11 +19,13 @@ class RecordingListItem extends StatelessWidget {
     required this.onShare,
     required this.onDelete,
     required this.onTap,
+    required this.onTranscribe,
   });
 
   @override
   Widget build(BuildContext context) {
-    final dateStr = DateFormat('yyyy. MM. dd. HH:mm').format(recording.createdAt);
+    final dateStr =
+        DateFormat('yyyy. MM. dd. HH:mm').format(recording.createdAt);
 
     return GestureDetector(
       onTap: onTap,
@@ -70,7 +73,8 @@ class RecordingListItem extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     dateStr,
-                    style: const TextStyle(fontSize: 12, color: Color(0xFF888888)),
+                    style: const TextStyle(
+                        fontSize: 12, color: Color(0xFF888888)),
                   ),
                 ],
               ),
@@ -80,17 +84,24 @@ class RecordingListItem extends StatelessWidget {
               style: const TextStyle(fontSize: 12, color: Color(0xFF888888)),
             ),
             PopupMenuButton<String>(
-              icon: const Icon(Icons.more_vert, color: Color(0xFF888888), size: 20),
+              icon: const Icon(Icons.more_vert,
+                  color: Color(0xFF888888), size: 20),
               color: const Color(0xFF2A2A2A),
               onSelected: (value) {
+                if (value == 'transcribe') onTranscribe();
                 if (value == 'share') onShare();
                 if (value == 'delete') onDelete();
               },
               itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'transcribe',
+                  child: Text('텍스트 변환'),
+                ),
                 const PopupMenuItem(value: 'share', child: Text('공유')),
                 const PopupMenuItem(
                   value: 'delete',
-                  child: Text('삭제', style: TextStyle(color: Colors.redAccent)),
+                  child: Text('삭제',
+                      style: TextStyle(color: Colors.redAccent)),
                 ),
               ],
             ),

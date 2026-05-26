@@ -17,15 +17,19 @@ void main() {
     VoidCallback? onShare,
     VoidCallback? onDelete,
     VoidCallback? onTap,
+    VoidCallback? onTranscribe,
   }) {
     return MaterialApp(
       theme: ThemeData.dark(),
       home: Scaffold(
         body: RecordingListItem(
           recording: testRecording,
+          isPlaying: false,
+          onPlay: () {},
           onShare: onShare ?? () {},
           onDelete: onDelete ?? () {},
           onTap: onTap ?? () {},
+          onTranscribe: onTranscribe ?? () {},
         ),
       ),
     );
