@@ -50,6 +50,7 @@ void main() {
       expect(restored.fileName, original.fileName);
       expect(restored.duration, original.duration);
       expect(restored.sha256Hash, original.sha256Hash);
+      expect(restored.createdAt, original.createdAt);
     });
   });
 }
