@@ -71,6 +71,12 @@ class _TranscriptionDialogState extends State<TranscriptionDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text('텍스트 변환을 위한 AI 모델 다운로드 중...'),
+            const SizedBox(height: 6),
+            const Text(
+              '최초 1회만 다운로드되며 이후에는 바로 변환됩니다.',
+              style: TextStyle(fontSize: 11, color: Color(0xFF888888)),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 12),
             LinearProgressIndicator(value: _downloadProgress),
             const SizedBox(height: 8),
