@@ -6,6 +6,7 @@ import '../services/recording_storage_service.dart';
 import '../services/whisper_service.dart';
 import '../widgets/recording_list_item.dart';
 import '../widgets/transcription_dialog.dart';
+import '../widgets/banner_ad_widget.dart';
 import 'package:path_provider/path_provider.dart';
 
 class RecordingListScreen extends StatefulWidget {
@@ -213,6 +214,7 @@ class RecordingListScreenState extends State<RecordingListScreen> {
                         ),
                       ),
           ),
+          const BannerAdWidget(),
         ],
       ),
     );

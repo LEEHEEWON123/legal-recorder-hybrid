@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:record/record.dart';
 import '../services/recording_service.dart';
 import '../widgets/waveform_painter.dart';
+import '../widgets/banner_ad_widget.dart';
 
 enum RecordingState { idle, recording, paused }
 
@@ -250,6 +251,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
             ],
           ),
           const SizedBox(height: 48),
+          const BannerAdWidget(),
         ],
       ),
     );
